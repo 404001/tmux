@@ -10,15 +10,16 @@ unbind C-b
 bind C-a send-prefix
 setw -g automatic-rename on
 set -g status-interval 5
-set -g status-justify centre
+set -g status-justify left
 set -g status-bg black
 set -g status-fg white
-set -g status-left-length 50
-set -g status-right-length 150
+set -g status-left-length 100
+set -g status-right-length 100
 
 # Topbar content
-set -g status-left "#(whoami)"
-set -g status-right "IP: #(hostname -I | awk '{print $2}') | Adapter: #(ip link show | grep -E '^[2]: ' | awk -F: '{print $2}' | xargs) | #[fg=cyan]%H:%M:%S #[fg=yellow]%d-%m-%Y"
+set -g status-position top
+set -g status-left " User: #(whoami) "
+set -g status-right " #[fg=cyan]IP: #(hostname -I | awk '{print $1}') #[fg=white]| #[fg=yellow]Time: %H:%M:%S "
 EOT
 
 source ~/.tmux.conf
