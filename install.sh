@@ -1,40 +1,28 @@
 #!/bin/bash
 
-sudo apt update && sudo apt install -y tmux polybar
+sudo apt update && sudo apt install -y tmux
 
-echo "Creating tmux configuration"
+echo "Configuring tmux for topbar"
 cat <<EOT > ~/.tmux.conf
 set -g mouse on
 set -g prefix C-a
 unbind C-b
 bind C-a send-prefix
 setw -g automatic-rename on
-set-option -g status off
+set -g status-interval 5
+set -g status-justify centre
+set -g status-bg black
+set -g status-fg white
+set -g status-left-length 50
+set -g status-right-length 150
+
+# Topbar content
+set -g status-left "#(whoami)"
+set -g status-right "IP: #(hostname -I | awk '{print $2}') | Adapter: #(ip link show | grep -E '^[2]: ' | awk -F: '{print $2}' | xargs) | #[fg=cyan]%H:%M:%S #[fg=yellow]%d-%m-%Y"
 EOT
 
-echo "Configuring polybar"
-mkdir -p ~/.config/polybar
-cat <<EOT > ~/.config/polybar/config.ini
-[bar/example]
-width = 100%
-height = 30
-background = #222222
-foreground = #ffffff
-modules-left = tmux
-EOT
+source ~/.tmux.conf
 
-cat <<EOT > ~/.config/polybar/launch.sh
-#!/bin/bash
-killall -q polybar
-while pgrep -u $UID -x polybar >/dev/null; do sleep 1; done
-polybar example &
-EOT
-chmod +x ~/.config/polybar/launch.sh
-
-~/.config/polybar/launch.sh
-
-echo "Starting tmux session"
-tmux new-session -d -s main
-
-tmux send-keys -t main "~/.config/polybar/launch.sh" C-m
-tmux attach -t main
+echo "Starting tmux session with topbar"
+tmux new-session -d -s topbar
+tmux attach -t topbar
